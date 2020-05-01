@@ -1,0 +1,46 @@
+---
+
+    - hosts: camberry
+      gather_facts: no
+      remote_user: pi
+      tasks:
+      - name: Copy correct timezone file to raspberry
+        become: yes
+        copy: src=config/timezone
+              dest=/etc/timezone
+              owner=root
+              group=root
+              mode=0644
+              backup=yes
+      - name: Create symbolic link
+        become: yes 
+        file:
+         src: "/usr/share/zoneinfo/Europe/Helsinki"
+         dest: "/etc/localtime"
+         state: link
+      - name: Set Timezone
+        become: yes
+        shell: dpkg-reconfigure --frontend noninteractive tzdata
+      - name: Ensure camberry has cam software
+        become: yes
+        apt:
+          name: python-picamera
+          state: latest
+          update_cache: yes
+      - name: copy python code to camberry
+        copy:
+          src: python_code/take_image.py
+          dest: /home/pi/python/
+          owner: pi
+          group: pi
+          mode: u=rwx,g=wr,o=r
+      - name: Clean old images
+        file:
+          state: absent
+          path: /home/pi/images/
+      - name: Creates directory
+        file:
+          path: /home/pi/images/
+          state: directory    
+      - name: Take picture
+        shell: python /home/pi/python/take_image.py
