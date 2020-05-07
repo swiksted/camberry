@@ -8,12 +8,14 @@
          group=root
          mode=0644
          backup=yes
+         
  - name: Create symbolic link
    become: yes 
    file:
     src: "/usr/share/zoneinfo/Europe/Helsinki"
     dest: "/etc/localtime"
     state: link
+
  - name: Set Timezone
    become: yes
    shell: dpkg-reconfigure --frontend noninteractive tzdata
