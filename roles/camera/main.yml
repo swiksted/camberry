@@ -1,0 +1,32 @@
+- name: Ensure camberry has cam software
+    become: yes
+    apt:
+        name: python-picamera
+        state: latest
+        update_cache: yes
+- name: copy python code to camberry
+        copy:
+        src: python_code/take_image.py
+        dest: /home/pi/python/
+        owner: pi
+        group: pi
+        mode: u=rwx,g=wr,o=r
+- name: Clean old images
+        file:
+        state: absent
+        path: /home/pi/images/
+- name: Creates directory
+        file:
+        path: /home/pi/images/
+        state: directory    
+        
+          
+#        - name: Add camera lines to boot config
+#  tags: camera
+#  lineinfile:
+#    path: /boot/config.txt
+#    line: '{{ item }}'
+#  with_items:
+#    - "start_x=1             # essential"
+#    - "gpu_mem=128           # at least, or maybe more if you wish"
+#    - "# disable_camera_led=1  # optional, if you don't want the led to glow"

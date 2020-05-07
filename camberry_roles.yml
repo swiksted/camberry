@@ -1,0 +1,11 @@
+---
+
+    - hosts: camberry
+      gather_facts: no
+      remote_user: pi
+      roles:
+        - timezone
+        - camera
+      tasks:
+        - name: Take picture
+          shell: python /home/pi/python/take_image.py
